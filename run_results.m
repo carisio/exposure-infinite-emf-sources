@@ -58,7 +58,7 @@ fprintf('%2f\t%2f\n', sum(S), TER);
 % frequency
 % PS.: The calculation below assumes that the inner ring is the same
 % for all frequencies. 
-nRings = 82;
+nRings = 50;
 TER_acc = zeros(nRings, 1);
 nFreq = length(freq);
 S_acc = zeros(nFreq, nRings);
@@ -75,11 +75,90 @@ for f=1:nFreq
     end
     ER_acc(f, :) = 100 * S_acc(f, :) / S_lim(f);
 end
-TER_acc = sum(ER_acc, 1);
-TER_lim = ones(nRings)*TER;
+TER_acc = sum(ER_acc, 1)';
+TER_lim = ones(nRings, 1)*TER;
 percentage_acc_to_lim = TER_acc/TER;
-d = R(1)*(1:nRings);
+
+% Plot TER considering contributions of different rings
+rings=1:nRings;
+d = R(1)*rings;
 figure(1);
-plot(d, TER_acc, d, TER_lim);
+fig1 = plot(rings, TER_acc, rings, TER_lim);
+xlabel('n^{th} ring');
+ylabel('Exposure ratio and percentage of the calculated TER');
+set(fig1(1),'Color', 'black', 'LineWidth', 3, 'LineStyle', '.');
+set(fig1(2),'Color', 'black', 'LineWidth', 3, 'LineStyle', '-');
+legend('Contribution of the first n rings to the ER', 'TER limit');
+legend('location', 'southeast');
+axis([0 nRings 0 ceil(TER)]);
+set(gca, 'XTick', 0:5:50)
+% Change YTickLabel to show the percentage of the maximum TER
+yticks = get(gca, 'YTick');
+newLabel = '';
+for i=1:length(yticks)
+    if (yticks(i) < TER && yticks(i) ~= 0)
+        newLabel = strcat(newLabel, sprintf('%1.1f (%1.0f %%)', yticks(i), 100*yticks(i)/TER));
+    else
+        newLabel = strcat(newLabel, sprintf('%1.1f', yticks(i)));
+    end
+    if (i < length(yticks))
+        newLabel = strcat(newLabel, '|');
+    end
+end
+set(gca, 'YTickLabel', newLabel);
+grid;
+
+% Plot measurements.
+% Column 1: Latitude
+% Column 2: Longitude
+% Column 3: electric field (V/m)
+measurements = load('measurements.txt');
+s_measured = measurements(:,3).^2/377;
+s_measured = sort(s_measured);
+samples = length(s_measured);
+s_max_calculated = sum(S);
+
 figure(2);
-plot(d, percentage_acc_to_lim);
+% fig2 = cdfplot(s_measured);
+fig2 = semilogx(s_measured, 1/samples:1/samples:1);
+%title('cdf of the power density measured in Brasília');
+xlabel('x');
+ylabel('F(x)');
+set(fig2,'Color', 'black', 'LineWidth', 2, 'LineStyle', '.');
+% xticks = 0:s_max_calculated/5:s_max_calculated; For linear scale
+% xticks = [10e-5 10e-4 10e-3 10e-2 10e-1 10e0];
+xticks = [s_max_calculated/10000 s_max_calculated/1000 s_max_calculated/100 s_max_calculated/10 s_max_calculated];
+newLabel = '';
+for i=1:length(xticks)
+    newLabel = strcat(newLabel, sprintf('%1.0e (%1.1f %%)', xticks(i), 100*xticks(i)/s_max_calculated));
+    if (i < length(xticks))
+        newLabel = strcat(newLabel, '|');
+    end
+    
+end
+set(gca, 'XTick', xticks);
+set(gca, 'XTickLabel', newLabel);
+axis([0 s_max_calculated 0 1])
+grid
+
+% Plot EMF Estimator data
+% Column 1: Distance X [m]
+% Total exposure [%]
+% LTE2600 [%]
+% UMTS2100 [%]
+% LTE1800 [%]
+% UMTS850 [%]
+% LTE700 [%]
+emfestimatordata = load('emfestimatordata.csv');
+figure(3);
+fig3 = plot(emfestimatordata(:,1), emfestimatordata(:,2:7));
+set(fig3(1),'Color', 'black', 'LineWidth', 3, 'LineStyle', '-');
+set(fig3(2),'Color', 'black', 'LineWidth', 3, 'LineStyle', '--'); % OK
+set(fig3(3),'Color', [0.5 0.5 0.5], 'LineWidth', 3, 'LineStyle', '--'); % OK
+set(fig3(4),'Color', [0.5 0.5 0.5], 'LineWidth', 3, 'LineStyle', '-'); 
+set(fig3(5),'Color', 'black', 'LineWidth', 3, 'LineStyle', ':'); % OK
+set(fig3(6),'Color', [0.5 0.5 0.5], 'LineWidth', 3, 'LineStyle', ':'); % OK
+legend('TER', 'LTE 2600 MHz', 'UMTS 2100 MHz', 'LTE 1800 MHz', 'UMTS 850 MHz', 'LTE 700 MHz');
+xlabel('Distance from base station [m]');
+ylabel('Exposure ratio [%]');
+grid;
