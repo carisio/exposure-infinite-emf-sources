@@ -112,7 +112,7 @@ grid;
 % Column 1: Latitude
 % Column 2: Longitude
 % Column 3: electric field (V/m)
-measurements = load('measurements.txt');
+measurements = load('measurements brasilia/measurements.txt');
 s_measured = measurements(:,3).^2/377;
 s_measured = sort(s_measured);
 samples = length(s_measured);
@@ -149,7 +149,7 @@ grid
 % LTE1800 [%]
 % UMTS850 [%]
 % LTE700 [%]
-emfestimatordata = load('emfestimatordata.csv');
+emfestimatordata = load('emf estimator project/emfestimatordata.csv');
 figure(3);
 fig3 = plot(emfestimatordata(:,1), emfestimatordata(:,2:7));
 set(fig3(1),'Color', 'black', 'LineWidth', 3, 'LineStyle', '-');
