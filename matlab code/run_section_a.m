@@ -88,7 +88,7 @@ xlabel('n^{th} ring');
 ylabel('Exposure ratio and percentage of the calculated TER');
 set(fig1(1),'Color', 'black', 'LineWidth', 3, 'LineStyle', '.');
 set(fig1(2),'Color', 'black', 'LineWidth', 3, 'LineStyle', '-');
-legend('Contribution of the first n rings to the ER', 'TER limit');
+legend('Contribution of the first n rings to the ER', 'TER');
 legend('location', 'southeast');
 axis([0 nRings 0 ceil(TER)]);
 set(gca, 'XTick', 0:5:50)
@@ -121,7 +121,7 @@ s_max_calculated = sum(S);
 figure(2);
 % fig2 = cdfplot(s_measured);
 fig2 = semilogx(s_measured, 1/samples:1/samples:1);
-%title('cdf of the power density measured in Brasília');
+%title('cdf of the power density measured in BrasÃ­lia');
 xlabel('x');
 ylabel('F(x)');
 set(fig2,'Color', 'black', 'LineWidth', 2, 'LineStyle', '.');
