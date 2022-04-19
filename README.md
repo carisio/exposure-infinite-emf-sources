@@ -1,5 +1,7 @@
 # Simulation files for the paper "Simultaneous Exposure to Infinite RF-EMF Sources from Typical Base Stations"
 
+This repository contains files to reproduce the results of the paper "Simultaneous Exposure to Infinite RF-EMF Sources from Typical Base Stations" (accepted for publication in IEEE Antennas and Propagation Magazine) [DOI: 10.1109/MAP.2021.3106829](https://doi.org/10.1109/MAP.2021.3106829).
+
 This repository has two folders: 'java code' and 'matlab code'.
 
 ## 'matlab code' folder
